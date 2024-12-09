@@ -37,7 +37,9 @@ spec:
   affinity:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if .Values.cluster.priorityClassName }}
   priorityClassName: {{ .Values.cluster.priorityClassName }}
+  {{ end }}
 
   primaryUpdateMethod: {{ .Values.cluster.primaryUpdateMethod }}
   primaryUpdateStrategy: {{ .Values.cluster.primaryUpdateStrategy }}
@@ -53,6 +55,7 @@ spec:
   {{ end }}
   enablePDB: {{ .Values.cluster.enablePDB }}
   postgresql:
+    {{- if or ( eq .Values.type "timescaledb" ) .Values.cluster.postgresql.shared_preload_libraries }}
     shared_preload_libraries:
       {{- if eq .Values.type "timescaledb" }}
       - timescaledb
@@ -60,6 +63,7 @@ spec:
       {{- with .Values.cluster.postgresql.shared_preload_libraries }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
+    {{- end }}
     {{- with .Values.cluster.postgresql }}
     pg_hba:
       {{- toYaml .pg_hba | nindent 6 }}
@@ -68,7 +72,7 @@ spec:
     {{-if .ldap}}
     ldap: 
       {{- toYaml .ldap | nindent 6 }}
-    {{- end}}
+    {{- end }}
     parameters:
       {{- toYaml .parameters | nindent 6 }}
     {{ end }}
@@ -86,6 +90,20 @@ spec:
   {{- with .Values.cluster.serviceAccountTemplate }}
   serviceAccountTemplate:
     {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- if .Values.cluster.env}}
+  env: 
+  {{- toYaml .Values.cluster.env | nindent 4 }}
+  {{- end }}
+  {{- if .Values.cluster.envFrom}}
+  envFrom: 
+  {{- toYaml .Values.cluster.envFrom | nindent 4 }}
+  {{- end }}
+  {{- if .Values.cluster.projectedVolumeSources}}
+  projectedVolumeTemplate: 
+    sources:
+      {{- toYaml .Values.cluster.projectedVolumeSources | nindent 6 }}
   {{- end }}
 
   monitoring:
