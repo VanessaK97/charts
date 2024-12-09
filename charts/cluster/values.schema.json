@@ -275,7 +275,7 @@
                             "type": "array"
                         },
                         "ldap": {
-                            "type": "array"
+                            "type": "object"
                         }
                     }
                 },
