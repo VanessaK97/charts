@@ -70,6 +70,10 @@ spec:
     {{ end }}
 
   managed:
+    {{- with .Values.cluster.services }}
+    services:
+      {{- toYaml . | nindent 6 }}
+    {{ end }}
     {{- with .Values.cluster.roles }}
     roles:
       {{- toYaml . | nindent 6 }}
